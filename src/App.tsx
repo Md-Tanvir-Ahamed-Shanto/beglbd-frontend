@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Helmet } from "react-helmet"; // ✅ react-helmet import
+import { Helmet } from "react-helmet";
 
 // Components
 import Header from "./components/Header";
@@ -74,12 +74,33 @@ const AppContent = () => {
     <div className="min-h-screen flex flex-col">
       {/* ✅ Default Helmet for whole app */}
       <Helmet>
-        <title>{adminData[0]?.websiteTitle || "BGEL BD"}</title>
-        <link rel="icon" type="image/png" href={adminData[0]?.favicon} />
+        <title> {adminData[0]?.websiteTitle || "BEGL AU - Home"} </title>
         <meta
           name="description"
-          content="UniGrants - Study Abroad Scholarships and University Applications"
+          content={
+            adminData[0]?.metaDescription ||
+            "বিদেশে পড়াশোনার জন্য ১০০% ফ্রি পরামর্শ। অস্ট্রেলিয়া, কানাডা, যুক্তরাজ্য ও অন্যান্য দেশে উচ্চশিক্ষার সুযোগ।"
+          }
         />
+        <meta name="author" content="BEGL BD" />
+
+        <meta
+          property="og:title"
+          content="BEGL BD - বিদেশে পড়াশোনার স্বপ্ন পূরণ"
+        />
+        <meta
+          property="og:description"
+          content="বিদেশে পড়াশোনার জন্য ১০০% ফ্রি পরামর্শ। অস্ট্রেলিয়া, কানাডা, যুক্তরাজ্য ও অন্যান্য দেশে উচ্চশিক্ষার সুযোগ।"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="IMAGE_URL_HERE" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@YOUR_TWITTER_HANDLE" />
+        <meta name="twitter:image" content="IMAGE_URL_HERE" />
+
+        {/* PNG favicon হলে */}
+        <link rel="icon" href={adminData[0]?.favicon} type="image/png" />
       </Helmet>
 
       {!hideHeaderFooter && <Header />}

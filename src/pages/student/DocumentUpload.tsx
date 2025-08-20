@@ -72,6 +72,19 @@ export default function StudentDocumentUpload() {
   const [lead, setLead] = useState<LeadFromLinkApi | null>(null);
   const [leadLoading, setLeadLoading] = useState(false);
   const [leadError, setLeadError] = useState("");
+  const [adminData, setAdminData] = useState([]);
+  // get admin data->>>
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}/admin_data`)
+      .then((res) => {
+        const data = res.data;
+        setAdminData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   // const [counselorUserName , setCounselorUsername] = useState("")
 
   // Existing hook to read all leads for phone verification (kept as-is per request)
@@ -94,6 +107,11 @@ export default function StudentDocumentUpload() {
         setLinkId(findLeads?.id);
       }
       console.log(findCounselor);
+    }
+    if (findLeads?.counselor === "Admin") {
+      console.log("admin----------->", findLeads?.id);
+      setLinkId(findLeads?.id);
+      setCounselorUsername("Admin");
     }
   }, [allLeads, data, phoneNumber]);
 
@@ -436,6 +454,7 @@ export default function StudentDocumentUpload() {
               </label>
               <input
                 type="text"
+                readOnly
                 value={counselorUsername}
                 onChange={(e) => setCounselorUsername(e.target.value.trim())}
                 placeholder={counselorUsername}
@@ -615,9 +634,9 @@ export default function StudentDocumentUpload() {
               href="mailto:support@beglbd.com"
               className="text-primary hover:underline"
             >
-              support@beglbd.com
+              {adminData[0]?.contactEmail}
             </a>{" "}
-            or call +880 1712-345678
+            or call {adminData[0]?.contactPhone}
           </p>
         </div>
       </div>

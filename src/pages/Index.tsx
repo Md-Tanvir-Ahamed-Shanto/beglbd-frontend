@@ -109,6 +109,20 @@ const Index = () => {
     filesOpened: 0,
     successfullyDeparted: 0,
   });
+  // get admin data ===>
+  const [adminData, setAdminData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}/admin_data`)
+      .then((res) => {
+        setAdminData(res.data);
+        // console.log(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching admin data:", err);
+      });
+  }, []);
   // !stats management---->
   useEffect(() => {
     axios
@@ -251,9 +265,9 @@ const Index = () => {
                   lineHeight: "1.1",
                 }}
               >
-                {heroSectionData[0].title || "বিদেশে পড়াশোনা"}
+                {heroSectionData[0]?.title || "বিদেশে পড়াশোনা"}
                 <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-green-500 bg-clip-text text-transparent block mt-2">
-                  {heroSectionData[0].subtitle || " এখন আরও সহজ!"}
+                  {heroSectionData[0]?.subtitle || " এখন আরও সহজ!"}
                 </span>
               </h1>
               <p
@@ -262,11 +276,12 @@ const Index = () => {
                   lineHeight: "1.5",
                 }}
               >
-                {heroSectionData[0].description ||
+                {heroSectionData[0]?.description ||
                   " অস্ট্রেলিয়া, যুক্তরাজ্য, মালয়েশিয়া, নিউজিল্যান্ডে ভর্তি ও ভিসা সাপোর্ট"}
               </p>
               <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 leading-relaxed">
-                পান ১০০% ফ্রি পরামর্শ ও সম্পূর্ণ সাপোর্ট
+                {adminData[0]?.tagline ||
+                  " পান ১০০% ফ্রি পরামর্শ ও সম্পূর্ণ সাপোর্ট"}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Button
