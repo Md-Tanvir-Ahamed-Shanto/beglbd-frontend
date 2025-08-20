@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { 
+import React, { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+import {
   Eye,
   Edit,
   Search,
@@ -10,17 +13,21 @@ import {
   MapPin,
   User,
   Calendar,
-  Plane
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+  Plane,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { format } from "date-fns";
-import LeadViewModal from '@/components/admin/LeadViewModal';
-import LeadEditModal from '@/components/admin/LeadEditModal';
-import useGetAllLeadsData from '@/hooks/useGetAllLeadsData';
-import Loading from '@/components/Loading';
+import LeadViewModal from "@/components/admin/LeadViewModal";
+import LeadEditModal from "@/components/admin/LeadEditModal";
+import useGetAllLeadsData from "@/hooks/useGetAllLeadsData";
+import Loading from "@/components/Loading";
 
 interface Lead {
   id: number;
@@ -38,9 +45,9 @@ interface Lead {
 }
 
 const LeadManagement = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [counselorFilter, setCounselorFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [counselorFilter, setCounselorFilter] = useState("all");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -51,35 +58,37 @@ const LeadManagement = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'File Open':
-        return 'bg-green-100 text-green-800';
-      case 'Contacted':
-        return 'bg-blue-100 text-blue-800';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Not Interested':
-        return 'bg-red-100 text-red-800';
-      case 'Successfully Departed':
-        return 'bg-purple-100 text-purple-800';
+      case "File Open":
+        return "bg-green-100 text-green-800";
+      case "Contacted":
+        return "bg-blue-100 text-blue-800";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "Not Interested":
+        return "bg-red-100 text-red-800";
+      case "Successfully Departed":
+        return "bg-purple-100 text-purple-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
-    if (status === 'Successfully Departed') {
+    if (status === "Successfully Departed") {
       return <Plane className="w-3 h-3 mr-1" />;
     }
     return null;
   };
 
-  const filteredLeads = data?.filter(lead => {
+  const filteredLeads = data?.filter((lead) => {
     const matchesSearch =
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.phone.includes(searchTerm);
-    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
-    const matchesCounselor = counselorFilter === 'all' || lead.counselor === counselorFilter;
+    const matchesStatus =
+      statusFilter === "all" || lead.status === statusFilter;
+    const matchesCounselor =
+      counselorFilter === "all" || lead.counselor === counselorFilter;
 
     let matchesDateRange = true;
     if (startDate || endDate) {
@@ -88,7 +97,9 @@ const LeadManagement = () => {
       if (endDate && leadDate > endDate) matchesDateRange = false;
     }
 
-    return matchesSearch && matchesStatus && matchesCounselor && matchesDateRange;
+    return (
+      matchesSearch && matchesStatus && matchesCounselor && matchesDateRange
+    );
   });
 
   const handleViewLead = (lead: Lead) => {
@@ -106,36 +117,63 @@ const LeadManagement = () => {
     const updatedLeads = data.map((lead) =>
       lead.id === leadId ? { ...lead, status: newStatus } : lead
     );
-    console.log('Updated lead status:', leadId, newStatus);
+    console.log("Updated lead status:", leadId, newStatus);
   };
 
   const clearDateFilters = () => {
     setStartDate(undefined);
     setEndDate(undefined);
   };
+  // প্রথম অক্ষর ক্যাপিটালাইজ করার ফাংশন
+  const capitalizeFirstLetter = (str: string) => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
 
-  const exportToCSV = () => {
+  const exportToPDF = () => {
     if (!data) return;
-    const headers = ["ID","Name","Phone","Email","Country","Status","Counselor","Date Submitted"];
-    const rows = data.map(lead => [
-      lead.id,
-      lead.name,
-      lead.phone,
-      lead.email,
-      lead.country,
-      lead.status,
-      lead.counselor,
-      lead.dateSubmitted
-    ]);
-    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "leads.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(16);
+    doc.text("Lead Report", 14, 15);
+
+    // Table Columns
+    const tableColumn = [
+      "ID",
+      "Name",
+      "Phone",
+      "Email",
+      "Country",
+      "Status",
+      "Counselor",
+      "Date Submitted",
+    ];
+
+    // Table Rows
+    const tableRows = data
+      .map((lead) => [
+        lead.id,
+        lead.name,
+        lead.phone,
+        lead.email,
+        capitalizeFirstLetter(lead.country),
+        lead.status,
+        lead.counselor,
+        lead.dateSubmitted,
+      ])
+      .reverse();
+
+    // Generate Table
+    autoTable(doc, {
+      startY: 25,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    // Save File
+    doc.save("leads.pdf");
   };
 
   if (isLoading) return <Loading />;
@@ -144,15 +182,17 @@ const LeadManagement = () => {
     <div className="p-4 lg:p-6 bg-gray-50 min-h-screen">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Lead Management</h1>
-          <p className="text-gray-600">Manage and track all student inquiries</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+            Lead Management
+          </h1>
+          <p className="text-gray-600">
+            Manage and track all student inquiries
+          </p>
         </div>
-        <div className="flex items-center space-x-2 mt-4 lg:mt-0">
-          <Button onClick={exportToCSV} variant="outline" className="flex items-center space-x-2">
-            <Download className="w-4 h-4" />
-            <span>Export CSV</span>
-          </Button>
-        </div>
+        <Button onClick={() => exportToPDF()}>
+          <Download className="w-4 h-4" />
+          <span>Export PDF</span>
+        </Button>
       </div>
 
       {/* Filters */}
@@ -183,7 +223,9 @@ const LeadManagement = () => {
                     <option value="Pending">Pending</option>
                     <option value="Contacted">Contacted</option>
                     <option value="File Open">File Open</option>
-                    <option value="Successfully Departed">Successfully Departed</option>
+                    <option value="Successfully Departed">
+                      Successfully Departed
+                    </option>
                     <option value="Not Interested">Not Interested</option>
                   </select>
                 </div>
@@ -204,33 +246,57 @@ const LeadManagement = () => {
 
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-4 p-4 bg-gray-50 rounded-lg">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                  <span className="text-sm font-medium text-gray-700">Custom Date Range:</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Custom Date Range:
+                  </span>
                   <div className="flex flex-col space-y-2 w-full sm:flex-row sm:space-y-0 sm:space-x-2 sm:w-auto">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full sm:w-[140px] justify-start text-left font-normal">
+                        <Button
+                          variant="outline"
+                          className="w-full sm:w-[140px] justify-start text-left font-normal"
+                        >
                           <Calendar className="mr-2 h-4 w-4" />
                           {startDate ? format(startDate, "PPP") : "Start date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent mode="single" selected={startDate} onSelect={setStartDate} initialFocus />
+                        <CalendarComponent
+                          mode="single"
+                          selected={startDate}
+                          onSelect={setStartDate}
+                          initialFocus
+                        />
                       </PopoverContent>
                     </Popover>
 
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full sm:w-[140px] justify-start text-left font-normal">
+                        <Button
+                          variant="outline"
+                          className="w-full sm:w-[140px] justify-start text-left font-normal"
+                        >
                           <Calendar className="mr-2 h-4 w-4" />
                           {endDate ? format(endDate, "PPP") : "End date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent mode="single" selected={endDate} onSelect={setEndDate} initialFocus />
+                        <CalendarComponent
+                          mode="single"
+                          selected={endDate}
+                          onSelect={setEndDate}
+                          initialFocus
+                        />
                       </PopoverContent>
                     </Popover>
 
-                    <Button onClick={clearDateFilters} variant="outline" className="w-full sm:w-auto">Clear</Button>
+                    <Button
+                      onClick={clearDateFilters}
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                    >
+                      Clear
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -250,25 +316,46 @@ const LeadManagement = () => {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Info</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Counselor</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Student
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contact Info
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Country
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Counselor
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredLeads.map((lead, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap flex items-center">
                       <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-white" />
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                        <div className="text-sm text-gray-500">ID: #{lead?.id}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {lead.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          ID: #{lead?.id}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -283,16 +370,34 @@ const LeadManagement = () => {
                       <MapPin className="w-3 h-3 mr-1" /> {lead.country}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(lead.status)}`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                          lead.status
+                        )}`}
+                      >
                         {getStatusIcon(lead.status)}
                         {lead.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.counselor}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.dateSubmitted}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {lead.counselor}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {lead.dateSubmitted}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2">
-                      <button onClick={() => handleViewLead(lead)} className="text-primary hover:text-primary/80 p-1 rounded transition-colors"><Eye className="w-4 h-4" /></button>
-                      <button onClick={() => handleEditLead(lead)} className="text-gray-600 hover:text-gray-800 p-1 rounded transition-colors"><Edit className="w-4 h-4" /></button>
+                      <button
+                        onClick={() => handleViewLead(lead)}
+                        className="text-primary hover:text-primary/80 p-1 rounded transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleEditLead(lead)}
+                        className="text-gray-600 hover:text-gray-800 p-1 rounded transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -317,21 +422,50 @@ const LeadManagement = () => {
                     <p className="text-sm text-gray-500">ID: #{lead?.id}</p>
                   </div>
                 </div>
-                <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(lead.status)}`}>
+                <span
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                    lead.status
+                  )}`}
+                >
                   {getStatusIcon(lead.status)}
                   {lead.status}
                 </span>
               </div>
               <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600"><Phone className="w-3 h-3 mr-2" />{lead.phone}</div>
-                <div className="flex items-center text-sm text-gray-600"><Mail className="w-3 h-3 mr-2" />{lead.email}</div>
-                <div className="flex items-center text-sm text-gray-600"><MapPin className="w-3 h-3 mr-2" />{lead.country}</div>
-                <div className="flex items-center text-sm text-gray-600"><User className="w-3 h-3 mr-2" />{lead.counselor}</div>
-                <div className="flex items-center text-sm text-gray-600"><Calendar className="w-3 h-3 mr-2" />{lead.dateSubmitted}</div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <Phone className="w-3 h-3 mr-2" />
+                  {lead.phone}
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <Mail className="w-3 h-3 mr-2" />
+                  {lead.email}
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <MapPin className="w-3 h-3 mr-2" />
+                  {lead.country}
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <User className="w-3 h-3 mr-2" />
+                  {lead.counselor}
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <Calendar className="w-3 h-3 mr-2" />
+                  {lead.dateSubmitted}
+                </div>
               </div>
               <div className="flex items-center justify-end space-x-2 pt-3 border-t border-gray-100">
-                <button onClick={() => handleViewLead(lead)} className="text-primary hover:text-primary/80 p-2 rounded transition-colors"><Eye className="w-4 h-4" /></button>
-                <button onClick={() => handleEditLead(lead)} className="text-gray-600 hover:text-gray-800 p-2 rounded transition-colors"><Edit className="w-4 h-4" /></button>
+                <button
+                  onClick={() => handleViewLead(lead)}
+                  className="text-primary hover:text-primary/80 p-2 rounded transition-colors"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleEditLead(lead)}
+                  className="text-gray-600 hover:text-gray-800 p-2 rounded transition-colors"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -339,8 +473,17 @@ const LeadManagement = () => {
       </div>
 
       {/* Modals */}
-      <LeadViewModal lead={selectedLead}  isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} />
-      <LeadEditModal lead={selectedLead} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onUpdate={handleUpdateLeadStatus} />
+      <LeadViewModal
+        lead={selectedLead}
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+      />
+      <LeadEditModal
+        lead={selectedLead}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onUpdate={handleUpdateLeadStatus}
+      />
     </div>
   );
 };
