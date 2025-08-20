@@ -24,7 +24,7 @@ const Footer = () => {
     return <div>No data available</div>;
 
   const footerData = data[0] || {};
-  console.log("Footer Logo URL:", footerData.footerLogo);
+  console.log("Footer Logo URL:", footerData?.footerLogo);
 
   return (
     <footer className="bg-gray-800 text-white py-12">
@@ -34,10 +34,10 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-r from-purple-600 via-blue-600 to-green-500 rounded-full flex items-center justify-center shadow-lg">
-                {footerData.footerLogo ? (
+                {footerData?.footerLogo ? (
                   <img
                     className="rounded-full"
-                    src={footerData.footerLogo}
+                    src={footerData?.footerLogo}
                     alt="Logo"
                     onError={() => console.error("Failed to load footer logo")}
                   />
@@ -48,14 +48,14 @@ const Footer = () => {
               <h3 className="text-xl font-bold">BEGL BD</h3>
             </Link>
             <p className="text-gray-300 leading-relaxed mb-4">
-              {footerData.footerDescription ||
+              {footerData?.footerDescription ||
                 "Footer description not available"}
             </p>
 
             {/* Social Icons */}
             <div className="flex space-x-4">
               <a
-                href={footerData.facebook || "#"}
+                href={footerData?.facebook || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors"
@@ -63,7 +63,7 @@ const Footer = () => {
                 <Facebook size={16} />
               </a>
               <a
-                href={footerData.instagram || "#"}
+                href={footerData?.instagram || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-pink-700 transition-colors"
@@ -71,7 +71,7 @@ const Footer = () => {
                 <Instagram size={16} />
               </a>
               <a
-                href={footerData.youtube || "#"}
+                href={footerData?.youtube || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-700 transition-colors"
@@ -79,7 +79,7 @@ const Footer = () => {
                 <Youtube size={16} />
               </a>
               <a
-                href={footerData.linkedin || "#"}
+                href={footerData?.linkedin || "#"}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-800 transition-colors"
@@ -141,9 +141,9 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-bold mb-4">যোগাযোগ</h4>
             <div className="space-y-2 text-gray-300">
-              <p>📞 {footerData.contactPhone || "01768037870"}</p>
-              <p>✉️ {footerData.contactEmail || "info@begleducation.com"}</p>
-              <p>📍 {footerData.officeAddress || " গুলশান, ঢাকা, বাংলাদেশ"}</p>
+              <p>📞 {footerData?.contactPhone || "01768037870"}</p>
+              <p>✉️ {footerData?.contactEmail || "info@begleducation.com"}</p>
+              <p>📍 {footerData?.officeAddress || " গুলশান, ঢাকা, বাংলাদেশ"}</p>
               <p>🕒 রবি - বৃহস্পতি: ৯:০০ - ৬:০০</p>
             </div>
           </div>
@@ -156,7 +156,7 @@ const Footer = () => {
           </p>
           <p className="text-gray-400 text-sm mt-2">
             ©{" "}
-            {footerData.copyrightText ||
+            {footerData?.copyrightText ||
               "২০২৪ BEGL BD। সর্বস্বত্ব সংরক্ষিত। | Design & Developed by Ahasanul Haque Khairul "}
           </p>
         </div>
