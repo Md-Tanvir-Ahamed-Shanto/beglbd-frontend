@@ -40,7 +40,9 @@ const CounselorManagement = () => {
 
   // Initialize counselors from hook data
   useEffect(() => {
-    if (counselorsData) setCounselors(counselorsData);
+    if (counselorsData) {
+      setCounselors(counselorsData);
+    }
   }, [counselorsData]);
 
   const filteredCounselors = counselors.filter(
@@ -121,7 +123,7 @@ const CounselorManagement = () => {
 
   const handleGenerateLink = () => {
     const randomId = Math.random().toString(36).substr(2, 9);
-    const newLink = `https://beglbd.com/upload/${randomId}`;
+    const newLink = `https://begl.com.bd/upload/${randomId}`;
     setGeneratedLink(newLink);
     console.log("Generated upload link:", newLink);
   };

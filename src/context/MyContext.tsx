@@ -1,11 +1,13 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from "react";
 
 interface AuthUser {
   id: string;
   name: string;
   email: string;
 }
-
+// git add .
+// git commit -m "Your commit message"
+// git push origin my-feature-branch
 interface MyContextType {
   user: AuthUser | null;
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
@@ -17,7 +19,9 @@ interface MyContextProviderProps {
   children: ReactNode;
 }
 
-export const MyContextProvider: React.FC<MyContextProviderProps> = ({ children }) => {
+export const MyContextProvider: React.FC<MyContextProviderProps> = ({
+  children,
+}) => {
   const [user, setUser] = useState<AuthUser | null>(null);
 
   return (
