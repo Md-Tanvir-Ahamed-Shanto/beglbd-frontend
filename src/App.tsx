@@ -41,6 +41,11 @@ import CounselorUploadLinks from "./pages/counselor/UploadLinks";
 // Student
 import StudentDocumentUpload from "./pages/student/DocumentUpload";
 import axios from "axios";
+import StudyMaterials from "./pages/StudyMaterials";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import MaterialManagement from "./pages/admin/MaterialManagement";
+import BlogManagement from "./pages/admin/BlogManagement";
 
 // QueryClient টপ-লেভেলে তৈরি করুন
 const queryClient = new QueryClient();
@@ -113,6 +118,9 @@ const AppContent = () => {
             element={<StudyAbroadProcess />}
           />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/study-materials" element={<StudyMaterials />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
 
           {/* Student Upload Route */}
           <Route path="/upload/:linkId" element={<StudentDocumentUpload />} />
@@ -122,6 +130,8 @@ const AppContent = () => {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="leads" element={<Leads />} />
+            <Route path="materials" element={<MaterialManagement />} />
+            <Route path="blog" element={<BlogManagement />} />
             <Route path="counselors" element={<Counselors />} />
             <Route path="documents" element={<Documents />} />
             <Route path="document-upload" element={<DocumentUpload />} />
