@@ -90,10 +90,17 @@ const AppContent = () => {
       <ScrollToTop />
 
       <Helmet>
+        {/* Viewport for Mobile Responsiveness */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        {/* Page Title */}
         <title>
-          {`${adminData[0]?.websiteTitle} | ${adminData[0]?.tagline}` ||
-            "BEGL BD - Home"}
+          {adminData[0]?.websiteTitle
+            ? `${adminData[0]?.websiteTitle} | ${adminData[0]?.tagline}`
+            : "BEGL BD - Home"}
         </title>
+
+        {/* Meta Description */}
         <meta
           name="description"
           content={
@@ -101,25 +108,64 @@ const AppContent = () => {
             "বিদেশে পড়াশোনার জন্য ১০০% ফ্রি পরামর্শ। অস্ট্রেলিয়া, কানাডা, যুক্তরাজ্য ও অন্যান্য দেশে উচ্চশিক্ষার সুযোগ।"
           }
         />
+
+        {/* Meta Keywords (Optional) */}
+        <meta
+          name="keywords"
+          content={
+            adminData[0]?.keywords ||
+            "study abroad, education consultancy, Australia, Canada, UK"
+          }
+        />
+
+        {/* Author */}
         <meta name="author" content="BEGL BD" />
 
+        {/* Canonical URL */}
+        <link rel="canonical" href={window.location.href} />
+
+        {/* Open Graph Tags */}
         <meta
           property="og:title"
-          content="BEGL BD - বিদেশে পড়াশোনার স্বপ্ন পূরণ"
+          content={
+            adminData[0]?.ogTitle || "BEGL BD - বিদেশে পড়াশোনার স্বপ্ন পূরণ"
+          }
         />
         <meta
           property="og:description"
-          content="বিদেশে পড়াশোনার জন্য ১০০% ফ্রি পরামর্শ। অস্ট্রেলিয়া, কানাডা, যুক্তরাজ্য ও অন্যান্য দেশে উচ্চশিক্ষার সুযোগ।"
+          content={
+            adminData[0]?.ogDescription ||
+            "বিদেশে পড়াশোনার জন্য ১০০% ফ্রি পরামর্শ। অস্ট্রেলিয়া, কানাডা, যুক্তরাজ্য ও অন্যান্য দেশে উচ্চশিক্ষার সুযোগ।"
+          }
         />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="IMAGE_URL_HERE" />
+        <meta
+          property="og:image"
+          content={
+            adminData[0]?.ogImage || "https://your-site.com/default-image.jpg"
+          }
+        />
 
+        {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@YOUR_TWITTER_HANDLE" />
-        <meta name="twitter:image" content="IMAGE_URL_HERE" />
+        <meta name="twitter:site" content="@BEGLBD" />
+        <meta
+          name="twitter:image"
+          content={
+            adminData[0]?.ogImage || "https://your-site.com/default-image.jpg"
+          }
+        />
 
-        {/* PNG favicon হলে */}
-        <link rel="icon" href={adminData[0]?.favicon} type="image/png" />
+        {/* Favicon */}
+        <link
+          rel="icon"
+          href={adminData[0]?.favicon || "/default-favicon.ico"}
+          type={
+            adminData[0]?.favicon?.endsWith(".png")
+              ? "image/png"
+              : "image/x-icon"
+          }
+        />
       </Helmet>
 
       {!hideHeaderFooter && <Header />}
