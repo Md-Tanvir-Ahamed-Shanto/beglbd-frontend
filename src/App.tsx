@@ -81,7 +81,7 @@ const AppContent = () => {
     isAdminRoute || isCounselorRoute || isStudentUploadRoute;
 
   // check loading admin--->
-  if (isAdmin) {
+  if (isAdmin && !adminData && adminData[0]) {
     return <Loading></Loading>;
   }
   return (
@@ -91,9 +91,8 @@ const AppContent = () => {
 
       <Helmet>
         <title>
-          {" "}
           {`${adminData[0]?.websiteTitle} | ${adminData[0]?.tagline}` ||
-            "BEGL AU - Home"}{" "}
+            "BEGL BD - Home"}
         </title>
         <meta
           name="description"
