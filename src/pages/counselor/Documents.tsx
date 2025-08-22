@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import {
   Search,
   Filter,
@@ -126,6 +127,9 @@ const Documents = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
+      <Helmet>
+        <title>Document Management</title>
+      </Helmet>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">

@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Helmet } from "react-helmet";
 import {
   Table,
   TableBody,
@@ -305,6 +306,11 @@ const MaterialManagement = () => {
   return (
     <div className="space-y-6">
       {/* Error Message */}
+      <Helmet>
+        <title>
+          Material Management | Manage study materials for the public website
+        </title>
+      </Helmet>
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>
       )}

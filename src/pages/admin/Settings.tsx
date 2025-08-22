@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Helmet } from "react-helmet";
 import {
   Save,
   Upload,
@@ -168,6 +169,9 @@ const Settings = () => {
   };
   const renderGeneralSettings = () => (
     <div className="space-y-6">
+      <Helmet>
+        <title>Website Title | General Website Settings</title>
+      </Helmet>
       <h3 className="text-lg font-semibold text-gray-900">
         General Website Settings
       </h3>

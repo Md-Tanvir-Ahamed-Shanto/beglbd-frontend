@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Loading from "@/components/Loading";
 import ScrollToTop from "@/hooks/ScrollToTop";
-
+import { Helmet } from "react-helmet";
 type ContactDoc = {
   _id?: string;
   phone1: string;
@@ -37,6 +37,7 @@ const Contact = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/contact_informations`
         );
+
         const data: ContactDoc = res.data; // Single object expected
         setContactData(data);
       } catch (e) {
@@ -57,6 +58,12 @@ const Contact = () => {
   return (
     <div className="min-h-screen font-bangla bg-gradient-to-br from-blue-50 to-sky-100">
       {/* Hero Section */}
+      <Helmet>
+        <title>
+          যোগাযোগ করুন | আপনার যেকোনো প্রশ্ন বা পরামর্শের জন্য আমাদের সাথে
+          যোগাযোগ করুন। আমরা সর্বদা আপনার সেবায় নিয়োজিত।
+        </title>
+      </Helmet>
       <ScrollToTop></ScrollToTop>
       <section className="py-12 lg:py-24">
         <div className="container mx-auto px-4 max-w-7xl">

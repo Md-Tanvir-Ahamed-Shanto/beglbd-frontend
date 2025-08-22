@@ -14,7 +14,7 @@ import ThankYouPage from "../../components/student/ThankYouPage";
 import axios from "axios";
 import useGetAllLeadsData from "@/hooks/useGetAllLeadsData";
 import Loading from "@/components/Loading";
-
+import { Helmet } from "react-helmet";
 const StudentDocumentUpload = () => {
   const { linkId } = useParams();
   const navigate = useNavigate();
@@ -219,6 +219,12 @@ const StudentDocumentUpload = () => {
   if (!isVerified) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Helmet>
+          <title>
+            ডকুমেন্ট আপলোড করুন | বিদেশে পড়াশোনার জন্য প্রয়োজনীয় সকল
+            গুরুত্বপূর্ণ ডকুমেন্ট এবং গাইডলাইন এক জায়গায়
+          </title>
+        </Helmet>
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-6 lg:mb-8">
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, User, Tag, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { Helmet } from "react-helmet";
 const Blog = () => {
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("সব");
@@ -43,7 +43,12 @@ const Blog = () => {
   return (
     <div className="min-h-screen font-bangla bg-gradient-to-br from-blue-50 to-sky-100">
       {/* helmet using for seo---> */}
-
+      <Helmet>
+        <title>
+          আমাদের ব্লগ | বিদেশে উচ্চশিক্ষা সম্পর্কে সর্বশেষ তথ্য, টিপস এবং
+          গাইডলাইন পান আমাদের ব্লগ থেকে।
+        </title>
+      </Helmet>
       {/* Hero Section */}
       <section className="py-12 lg:py-24 bg-gradient-to-r from-purple-600 via-blue-600 to-green-500 text-white">
         <div className="container mx-auto px-4 max-w-7xl">

@@ -6,7 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import BlogPostModal from "@/components/admin/BlogPostModal";
 import CategoryModal from "@/components/admin/CategoryModal";
 import axios from "axios";
-
+import { Helmet } from "react-helmet";
 interface Category {
   _id: string;
   name: string;
@@ -155,6 +155,11 @@ const BlogManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>
+          ব্লগ ম্যানেজমেন্ট | ব্লগ পোস্ট এবং ক্যাটাগরি পরিচালনা করুন
+        </title>
+      </Helmet>
       <div className="">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">

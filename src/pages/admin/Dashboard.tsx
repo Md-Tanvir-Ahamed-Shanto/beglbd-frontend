@@ -8,6 +8,7 @@ import {
   Calendar,
   Filter,
 } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
   Popover,
@@ -128,6 +129,9 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
+      <Helmet>
+        <title>Dashboard |Overview of your lead management system</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>

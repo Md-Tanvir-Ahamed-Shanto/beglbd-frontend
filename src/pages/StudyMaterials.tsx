@@ -3,7 +3,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, BookOpen, Image, FileIcon } from "lucide-react";
-
+import { Helmet } from "react-helmet";
 const StudyMaterials = () => {
   const [materials, setMaterials] = useState([]);
   const [error, setError] = useState("");
@@ -87,6 +87,12 @@ const StudyMaterials = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Error Message */}
+      <Helmet>
+        <title>
+          সহায়ক সামগ্রী | বিদেশে পড়াশোনার জন্য প্রয়োজনীয় সকল গুরুত্বপূর্ণ
+          ডকুমেন্ট এবং গাইডলাইন এক জায়গায়
+        </title>
+      </Helmet>
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded container mx-auto mt-4">
           {error}

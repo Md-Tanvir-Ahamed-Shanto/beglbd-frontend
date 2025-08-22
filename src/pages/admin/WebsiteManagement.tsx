@@ -13,6 +13,7 @@ import {
   BookOpen,
   Award,
 } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import ServiceModal from "@/components/admin/ServiceModal";
 import UniversityModal from "@/components/admin/UniversityModal";
@@ -486,6 +487,9 @@ const WebsiteManagement = () => {
 
   const renderHeroSection = () => (
     <div className="space-y-6">
+      <Helmet>
+        <title>Website Management | BEGL_BD</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Hero Section</h3>
       </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
+import { Helmet } from "react-helmet";
 import {
   Eye,
   Edit,
@@ -180,6 +180,9 @@ const LeadManagement = () => {
 
   return (
     <div className=" bg-gray-50 min-h-screen">
+      <Helmet>
+        <title>Lead Management | Manage and track all student inquiries</title>
+      </Helmet>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">

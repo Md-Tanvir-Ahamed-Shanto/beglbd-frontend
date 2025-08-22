@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import {
   Users,
   FileText,
@@ -223,6 +224,9 @@ const Dashboard = () => {
   }
   return (
     <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
+      <Helmet>
+        <title>Dashboard | Welcome back! Here's your overview.</title>
+      </Helmet>
       <div className="mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
           Dashboard

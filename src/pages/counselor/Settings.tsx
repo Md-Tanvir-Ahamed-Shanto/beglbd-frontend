@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Save, User, Bell, Shield, Eye, EyeOff } from "lucide-react";
+import { Helmet } from "react-helmet";
 
 const CounselorSettings = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +28,9 @@ const CounselorSettings = () => {
   return (
     <div className="p-4 lg:p-6 bg-gray-50 min-h-screen">
       <div className="mb-6">
+        <Helmet>
+          <title>Settings</title>
+        </Helmet>
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
           Settings
         </h1>

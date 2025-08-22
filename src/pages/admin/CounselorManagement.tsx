@@ -14,6 +14,7 @@ import CounselorEditModal from "@/components/admin/CounselorEditModal";
 import useCounselorData from "@/hooks/useCounselorData";
 import axios from "axios";
 import Loading from "@/components/Loading";
+import { Helmet } from "react-helmet";
 interface Counselor {
   id: number;
   phone: string;
@@ -138,6 +139,11 @@ const CounselorManagement = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
+      <Helmet>
+        <title>
+          Counselor Management | Manage counselors and their lead assignments
+        </title>
+      </Helmet>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
