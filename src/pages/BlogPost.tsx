@@ -212,7 +212,7 @@ const BlogPost = () => {
                 </div>
               </div>
 
-              <pre className="prose prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <pre className="prose font-bangla prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
                 {blogPost.content || ""}
               </pre>
 
