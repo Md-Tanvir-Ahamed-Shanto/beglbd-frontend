@@ -40,20 +40,20 @@ const StudyMaterials = () => {
 
   const handleDownload = async (material) => {
     try {
-      // ফাইল ডাটা আনো
+      // Fetch file data
       const response = await axios.get(material.fileUrl, {
-        responseType: "arraybuffer", // PDF এর জন্য safest
+        responseType: "arraybuffer",
       });
 
-      // সঠিক mime type বের করো
+      // Determine MIME type
       const mimeType =
         response.headers["content-type"] || "application/octet-stream";
 
-      // blob তৈরি করো
+      // Create blob
       const fileBlob = new Blob([response.data], { type: mimeType });
       const fileURL = window.URL.createObjectURL(fileBlob);
 
-      // ফাইল extension detect করো
+      // Detect file extension
       let extension = "";
       if (mimeType.includes("pdf")) extension = "pdf";
       else if (mimeType.includes("jpeg")) extension = "jpg";
@@ -63,7 +63,7 @@ const StudyMaterials = () => {
         extension = "xls";
       else extension = mimeType.split("/")[1] || "file";
 
-      // লিঙ্ক তৈরি করে ডাউনলোড করাও
+      // Create download link
       const link = document.createElement("a");
       link.href = fileURL;
       link.setAttribute("download", `${material?.title}.${extension}`);
@@ -71,11 +71,11 @@ const StudyMaterials = () => {
       link.click();
       link.remove();
 
-      // memory free
+      // Free memory
       window.URL.revokeObjectURL(fileURL);
 
-      // update download status---->
-      axios.patch(
+      // Update download count
+      await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/increment_download/${material?._id}`
       );
     } catch (err) {
@@ -117,7 +117,7 @@ const StudyMaterials = () => {
             {materials?.map((material) => (
               <Card
                 key={material?._id}
-                className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md"
+                className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md flex flex-col min-h-[300px]"
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-center space-x-3 mb-3">
@@ -141,18 +141,18 @@ const StudyMaterials = () => {
                         {material.title}
                       </CardTitle>
                       <p className="text-sm text-gray-500 mt-1">
-                        {material.fileSize} • {material.uploadDate}
+                        {material.fileSize || "N/A"} • {material.uploadDate}
                       </p>
                     </div>
                   </div>
                 </CardHeader>
 
-                <CardContent className="pt-0">
-                  <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">
+                <CardContent className="pt-0 flex flex-col flex-grow">
+                  <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">
                     {material.description}
                   </p>
 
-                  <div className="flex justify-center">
+                  <div className="mt-auto flex justify-center">
                     <Button
                       className="w-full bg-primary hover:bg-primary/90 text-white"
                       onClick={() => handleDownload(material)}
@@ -164,13 +164,6 @@ const StudyMaterials = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          {/* Load More Button */}
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="px-8">
-              আরো দেখুন
-            </Button>
           </div>
         </div>
       </div>

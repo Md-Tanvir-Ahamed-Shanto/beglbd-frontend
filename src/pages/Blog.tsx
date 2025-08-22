@@ -102,10 +102,10 @@ const Blog = () => {
                     <span className="bg-brand-green/10 text-brand-green px-2 py-1 rounded-full text-xs font-medium">
                       {post.category}
                     </span>
-                    <div className="flex items-center space-x-1 text-xs text-gray-500">
+                    {/* <div className="flex items-center space-x-1 text-xs text-gray-500">
                       <Clock size={12} />
                       <span>{post.readTime || "৫ মিনিট"}</span>
-                    </div>
+                    </div> */}
                   </div>
                   <h3 className="text-lg font-bold text-gray-800 mb-3 leading-tight hover:text-brand-blue transition-colors">
                     {post.title}
@@ -119,9 +119,11 @@ const Blog = () => {
                         <User size={12} />
                         <span>{post.author || "Admin"}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 font-bold">
                         <Calendar size={12} />
-                        <span>{post.date || post.publishDate}</span>
+                        <span className="font-bold">
+                          {post.date || post.publishDate}
+                        </span>
                       </div>
                     </div>
                     <Link to={`/blog/${post._id}`}>

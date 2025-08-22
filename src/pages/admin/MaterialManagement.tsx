@@ -64,14 +64,12 @@ const MaterialManagement = () => {
   });
   const [error, setError] = useState("");
 
-  // Fetch materials on component mount
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/all_metarial_data`
         );
-        // Ensure response.data is an array; fallback to empty array if not
         const fetchedMaterials = Array.isArray(response.data)
           ? response.data
           : [];
@@ -79,7 +77,7 @@ const MaterialManagement = () => {
       } catch (err) {
         console.error("Error fetching materials:", err.response || err.message);
         setError("Failed to fetch materials");
-        setMaterials([]); // Ensure materials is an array even on error
+        setMaterials([]);
       }
     };
     fetchMaterials();
@@ -96,23 +94,34 @@ const MaterialManagement = () => {
     }
   };
 
+  const uploadFile = async (file) => {
+    if (!file) {
+      throw new Error("No file selected");
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error("File size exceeds 10MB limit");
+    }
+    const formData = new FormData();
+    formData.append("image", file); // ImgBB uses 'image' field for all files
+    const imgbbResponse = await axios.post(
+      "https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31",
+      formData
+    );
+    return imgbbResponse.data.data.url;
+  };
+
   const handleUpload = async () => {
     try {
       if (!newMaterial.title || !newMaterial.description) {
         setError("Title and description are required");
         return;
       }
-
-      let thumbnail = null;
-      if (newMaterial.file && newMaterial.type === "image") {
-        const formData = new FormData();
-        formData.append("image", newMaterial.file);
-        const imgbbResponse = await axios.post(
-          "https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31",
-          formData
-        );
-        thumbnail = imgbbResponse.data.data.url;
+      if (!newMaterial.file) {
+        setError("Please select a file to upload");
+        return;
       }
+
+      const fileUrl = await uploadFile(newMaterial.file);
 
       const materialData = {
         title: newMaterial.title,
@@ -124,8 +133,8 @@ const MaterialManagement = () => {
         uploadDate: new Date().toISOString().split("T")[0],
         status: newMaterial.status,
         downloads: 0,
-        thumbnail: thumbnail || null,
-        fileUrl: thumbnail || null, // Adjust for PDFs in production
+        thumbnail: fileUrl,
+        fileUrl: fileUrl,
       };
 
       const response = await axios.post(
@@ -144,7 +153,11 @@ const MaterialManagement = () => {
       setError("");
     } catch (err) {
       console.error("Error uploading material:", err.response || err.message);
-      setError(err.response?.data?.message || "Failed to upload material");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to upload material"
+      );
     }
   };
 
@@ -198,23 +211,20 @@ const MaterialManagement = () => {
         return;
       }
 
+      let fileUrl = selectedMaterial.fileUrl;
       let thumbnail = selectedMaterial.thumbnail;
-      if (editMaterial.file && selectedMaterial.type === "image") {
-        const formData = new FormData();
-        formData.append("image", editMaterial.file);
-        const imgbbResponse = await axios.post(
-          "https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31",
-          formData
-        );
-        thumbnail = imgbbResponse.data.data.url;
+
+      if (editMaterial.file) {
+        fileUrl = await uploadFile(editMaterial.file);
+        thumbnail = fileUrl;
       }
 
       const updatedData = {
         title: editMaterial.title,
         description: editMaterial.description,
         status: editMaterial.status,
-        thumbnail: thumbnail || selectedMaterial.thumbnail,
-        fileUrl: thumbnail || selectedMaterial.fileUrl,
+        thumbnail: thumbnail,
+        fileUrl: fileUrl,
         fileSize: editMaterial.file
           ? `${(editMaterial.file.size / 1024 / 1024).toFixed(1)} MB`
           : selectedMaterial.fileSize,
@@ -242,17 +252,20 @@ const MaterialManagement = () => {
       setError("");
     } catch (err) {
       console.error("Error updating material:", err.response || err.message);
-      setError(err.response?.data?.message || "Failed to update material");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to update material"
+      );
     }
   };
 
-  // Calculate total downloads with a guard clause
   const totalDownloads = Array.isArray(materials)
     ? materials.reduce((sum, m) => sum + (m.downloads || 0), 0)
     : 0;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className=" space-y-6">
       {/* Error Message */}
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>
@@ -442,7 +455,7 @@ const MaterialManagement = () => {
                             {material.title}
                           </div>
                           <div className="text-sm text-gray-500 truncate">
-                            {material.description}
+                            {material.description.slice(0, 40) + "..."}
                           </div>
                         </div>
                       </div>
@@ -522,7 +535,7 @@ const MaterialManagement = () => {
                         {material.title}
                       </h3>
                       <p className="text-sm text-gray-500 line-clamp-2">
-                        {material.description}
+                        {material.description.slice(0, 50) + "..."}
                       </p>
                     </div>
                   </div>

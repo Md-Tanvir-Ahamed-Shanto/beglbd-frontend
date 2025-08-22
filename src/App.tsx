@@ -46,6 +46,8 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import MaterialManagement from "./pages/admin/MaterialManagement";
 import BlogManagement from "./pages/admin/BlogManagement";
+import Loading from "./components/Loading";
+import ScrollToTop from "./hooks/ScrollToTop";
 
 // QueryClient টপ-লেভেলে তৈরি করুন
 const queryClient = new QueryClient();
@@ -54,14 +56,17 @@ const AppContent = () => {
   const location = useLocation();
   console.log("AppContent rendered, location:", location.pathname);
   // get admin data ===>
+  const [isAdmin, setIsAdmin] = useState(false);
   const [adminData, setAdminData] = useState([]);
 
   useEffect(() => {
+    setIsAdmin(true);
     axios
       .get(`${import.meta.env.VITE_BASE_URL}/admin_data`)
       .then((res) => {
         setAdminData(res.data);
         // console.log(res.data);
+        setIsAdmin(false);
       })
       .catch((err) => {
         console.error("Error fetching admin data:", err);
@@ -75,11 +80,21 @@ const AppContent = () => {
   const hideHeaderFooter =
     isAdminRoute || isCounselorRoute || isStudentUploadRoute;
 
+  // check loading admin--->
+  if (isAdmin) {
+    return <Loading></Loading>;
+  }
   return (
     <div className="min-h-screen flex flex-col">
       {/* ✅ Default Helmet for whole app */}
+      <ScrollToTop />
+
       <Helmet>
-        <title> {adminData[0]?.websiteTitle || "BEGL AU - Home"} </title>
+        <title>
+          {" "}
+          {`${adminData[0]?.websiteTitle} | ${adminData[0]?.tagline}` ||
+            "BEGL AU - Home"}{" "}
+        </title>
         <meta
           name="description"
           content={

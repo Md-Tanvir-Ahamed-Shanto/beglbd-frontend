@@ -1,11 +1,25 @@
-
-import React from 'react';
-import { CheckCircle, Home, Mail, Phone } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { CheckCircle, Home, Mail, Phone } from "lucide-react";
+import axios from "axios";
+import Loading from "../Loading";
 
 const ThankYouPage = () => {
   const handleBackHome = () => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
+  const [adminData, setAdminData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      setAdminData(res.data);
+      setLoading(false);
+    });
+    setLoading(false);
+  }, []);
+  if (loading) {
+    return <Loading></Loading>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-bangla">
@@ -19,9 +33,10 @@ const ThankYouPage = () => {
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
           ধন্যবাদ!
         </h1>
-        
+
         <p className="text-gray-600 text-base lg:text-lg mb-6 leading-relaxed">
-          আপনার ডকুমেন্টগুলি সফলভাবে আপলোড হয়েছে। আমাদের টিম শীঘ্রই আপনার সাথে যোগাযোগ করবে।
+          আপনার ডকুমেন্টগুলি সফলভাবে আপলোড হয়েছে। আমাদের টিম শীঘ্রই আপনার সাথে
+          যোগাযোগ করবে।
         </p>
 
         {/* Status Info */}
@@ -71,19 +86,19 @@ const ThankYouPage = () => {
             কোন প্রশ্ন থাকলে যোগাযোগ করুন:
           </p>
           <div className="flex flex-col sm:flex-row gap-2 text-sm">
-            <a 
-              href="mailto:support@beglbd.com" 
+            <a
+              href={`mailto:${adminData[0]?.contactEmail}`}
               className="flex items-center justify-center text-primary hover:underline"
             >
               <Mail className="w-4 h-4 mr-1" />
-              support@beglbd.com
+              {adminData[0]?.contactEmail}
             </a>
-            <a 
-              href="tel:+880 1712-345678" 
+            <a
+              href="tel:+880 1712-345678"
               className="flex items-center justify-center text-primary hover:underline"
             >
               <Phone className="w-4 h-4 mr-1" />
-              +880 1712-345678
+              {adminData[0]?.contactPhone}
             </a>
           </div>
         </div>

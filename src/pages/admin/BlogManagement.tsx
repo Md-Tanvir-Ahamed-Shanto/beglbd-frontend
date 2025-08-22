@@ -155,9 +155,8 @@ const BlogManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="p-4 sm:p-6">
+      <div className="">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               ব্লগ ম্যানেজমেন্ট
@@ -167,7 +166,6 @@ const BlogManagement = () => {
             </p>
           </div>
 
-          {/* Header Actions */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
               <div className="relative w-full sm:w-auto">
@@ -211,14 +209,12 @@ const BlogManagement = () => {
             </div>
           </div>
 
-          {/* Blog Posts List */}
           <Card>
             <CardHeader>
               <CardTitle>ব্লগ পোস্ট তালিকা</CardTitle>
             </CardHeader>
             <CardContent>
               {isMobile ? (
-                // Mobile vertical layout
                 <div className="space-y-4">
                   {filteredPosts.map((post) => (
                     <Card key={post._id} className="p-4">
@@ -279,7 +275,6 @@ const BlogManagement = () => {
                   ))}
                 </div>
               ) : (
-                // Desktop table layout
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[640px]">
                     <thead>
@@ -323,7 +318,6 @@ const BlogManagement = () => {
                                   বিশেষ
                                 </span>
                               )}
-                              {/* Show category on mobile */}
                               <div className="md:hidden mt-1">
                                 <span className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
                                   {post.category}
@@ -382,7 +376,6 @@ const BlogManagement = () => {
         </div>
       </div>
 
-      {/* Blog Post Modal */}
       {isModalOpen && (
         <BlogPostModal
           isOpen={isModalOpen}
@@ -393,7 +386,6 @@ const BlogManagement = () => {
         />
       )}
 
-      {/* Category Management Modal */}
       {isCategoryModalOpen && (
         <CategoryModal
           isOpen={isCategoryModalOpen}

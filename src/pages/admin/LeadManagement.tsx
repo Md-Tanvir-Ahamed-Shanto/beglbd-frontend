@@ -179,7 +179,7 @@ const LeadManagement = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="p-4 lg:p-6 bg-gray-50 min-h-screen">
+    <div className=" bg-gray-50 min-h-screen">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
