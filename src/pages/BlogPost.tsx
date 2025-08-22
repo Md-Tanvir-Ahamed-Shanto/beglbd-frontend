@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +17,24 @@ import { Helmet } from "react-helmet";
 const BlogPost = () => {
   const { id } = useParams();
   const [blogPost, setBlogPost] = useState(null);
+  // share update
+  const location = useLocation();
+  useEffect(() => {
+    const id = location.pathname.split("/")[2];
+    if (id) {
+      axios
+        .patch(`${import.meta.env.VITE_BASE_URL}/add_views/${id}`)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [location]);
 
   useEffect(() => {
+    console.log(location.pathname.split("/")[2]);
     const fetchPost = async () => {
       try {
         const res = await axios.get(

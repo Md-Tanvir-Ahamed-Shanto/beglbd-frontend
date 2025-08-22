@@ -125,7 +125,7 @@ const Documents = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       {/* Page Header */}
       <Helmet>
         <title>Document Management</title>

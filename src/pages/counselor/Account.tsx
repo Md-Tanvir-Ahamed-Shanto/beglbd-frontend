@@ -11,7 +11,7 @@ interface Counselor {
   phone: string;
   username: string;
   profileImage?: string;
-  password?: string; // Added password for default value
+  password?: string;
 }
 
 const Account = () => {
