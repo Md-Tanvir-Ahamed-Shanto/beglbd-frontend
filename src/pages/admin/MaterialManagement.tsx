@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,9 +26,9 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 import {
   Plus,
@@ -95,24 +95,57 @@ const MaterialManagement = () => {
     }
   };
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (file, type) => {
     if (!file) {
       throw new Error("No file selected");
     }
     if (file.size > 10 * 1024 * 1024) {
       throw new Error("File size exceeds 10MB limit");
     }
+
     const formData = new FormData();
-    formData.append("image", file); // ImgBB uses 'image' field for all files
-    const imgbbResponse = await axios.post(
-      "https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31",
-      formData
-    );
-    return imgbbResponse.data.data.url;
+    if (type === "image") {
+      formData.append("image", file);
+      try {
+        const imgbbResponse = await axios.post(
+          `https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31`,
+          formData
+        );
+        return imgbbResponse.data.data.url;
+      } catch (err) {
+        throw new Error(
+          err.response?.data?.error?.message ||
+            "Failed to upload image to ImgBB"
+        );
+      }
+    } else if (type === "pdf") {
+      formData.append("file", file);
+      try {
+        const pdfcoResponse = await axios.post(
+          "https://api.pdf.co/v1/file/upload",
+          formData,
+          {
+            headers: {
+              "x-api-key":
+                "akwebdev69@gmail.com_t9X8MSFZRD73MGhARssr0t2SijHRymWfUcIZbP5E2xPw9gh9ChiUTZkq2BggcIau",
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        return pdfcoResponse.data.url;
+      } catch (err) {
+        throw new Error(
+          err.response?.data?.error || "Failed to upload PDF to PDF.co"
+        );
+      }
+    } else {
+      throw new Error("Unsupported file type");
+    }
   };
 
   const handleUpload = async () => {
     setLoadingUpload(true);
+    setError("");
     try {
       if (!newMaterial.title || !newMaterial.description) {
         setError("Title and description are required");
@@ -123,7 +156,7 @@ const MaterialManagement = () => {
         return;
       }
 
-      const fileUrl = await uploadFile(newMaterial.file);
+      const fileUrl = await uploadFile(newMaterial.file, newMaterial.type);
 
       const materialData = {
         title: newMaterial.title,
@@ -153,15 +186,15 @@ const MaterialManagement = () => {
         status: "Active",
       });
       setError("");
-      setLoadingUpload(false);
     } catch (err) {
-      setLoadingUpload(false);
       console.error("Error uploading material:", err.response || err.message);
       setError(
         err.response?.data?.message ||
           err.message ||
           "Failed to upload material"
       );
+    } finally {
+      setLoadingUpload(false);
     }
   };
 
@@ -209,6 +242,7 @@ const MaterialManagement = () => {
   };
 
   const saveEdit = async () => {
+    setError("");
     try {
       if (!editMaterial.title || !editMaterial.description) {
         setError("Title and description are required");
@@ -219,7 +253,7 @@ const MaterialManagement = () => {
       let thumbnail = selectedMaterial.thumbnail;
 
       if (editMaterial.file) {
-        fileUrl = await uploadFile(editMaterial.file);
+        fileUrl = await uploadFile(editMaterial.file, selectedMaterial.type);
         thumbnail = fileUrl;
       }
 
@@ -269,7 +303,7 @@ const MaterialManagement = () => {
     : 0;
 
   return (
-    <div className=" space-y-6">
+    <div className="space-y-6">
       {/* Error Message */}
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>
@@ -332,7 +366,11 @@ const MaterialManagement = () => {
                   id="type"
                   value={newMaterial.type}
                   onChange={(e) =>
-                    setNewMaterial({ ...newMaterial, type: e.target.value })
+                    setNewMaterial({
+                      ...newMaterial,
+                      type: e.target.value,
+                      file: null,
+                    })
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 >
@@ -349,13 +387,17 @@ const MaterialManagement = () => {
                     Click to upload or drag and drop
                   </p>
                   <p className="text-xs text-gray-500">
-                    PDF, PNG, JPG up to 10MB
+                    {newMaterial.type === "pdf"
+                      ? "PDF up to 10MB"
+                      : "PNG, JPG, JPEG up to 10MB"}
                   </p>
                   <Input
                     id="file"
                     type="file"
                     className=""
-                    accept=".pdf,.png,.jpg,.jpeg"
+                    accept={
+                      newMaterial.type === "pdf" ? ".pdf" : ".png,.jpg,.jpeg"
+                    }
                     onChange={(e) =>
                       setNewMaterial({
                         ...newMaterial,
@@ -388,7 +430,7 @@ const MaterialManagement = () => {
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleUpload}>
+                <Button onClick={handleUpload} disabled={loadingUpload}>
                   {loadingUpload ? "Uploading..." : "Upload Material"}
                 </Button>
               </div>
@@ -741,13 +783,19 @@ const MaterialManagement = () => {
                     Click to upload or drag and drop
                   </p>
                   <p className="text-xs text-gray-500">
-                    PDF, PNG, JPG up to 10MB
+                    {selectedMaterial.type === "pdf"
+                      ? "PDF up to 10MB"
+                      : "PNG, JPG, JPEG up to 10MB"}
                   </p>
                   <Input
                     id="replace-file"
                     type="file"
                     className=""
-                    accept=".pdf,.png,.jpg,.jpeg"
+                    accept={
+                      selectedMaterial.type === "pdf"
+                        ? ".pdf"
+                        : ".png,.jpg,.jpeg"
+                    }
                     onChange={(e) =>
                       setEditMaterial({
                         ...editMaterial,
