@@ -15,8 +15,6 @@ import axios from "axios";
 import useGetAllLeadsData from "@/hooks/useGetAllLeadsData";
 import Loading from "@/components/Loading";
 
-const IMGBB_API_KEY = "67dc86d727e90b5175d7d74b3119fbcb";
-
 const StudentDocumentUpload = () => {
   const { linkId } = useParams();
   const navigate = useNavigate();
@@ -25,9 +23,10 @@ const StudentDocumentUpload = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [verificationError, setVerificationError] = useState("");
   const [isChecking, setIsChecking] = useState(false);
+  const [uploadErrors, setUploadErrors] = useState({});
 
-  // Store uploaded file info with imgbb links
-  const [documents, setDocuments] = useState<Record<string, any[]>>({});
+  // Store uploaded file info with links
+  const [documents, setDocuments] = useState({});
 
   const { data, isLoading } = useGetAllLeadsData();
 
@@ -54,7 +53,7 @@ const StudentDocumentUpload = () => {
     setTimeout(() => {
       // Check in fetched data for phone property
       const isRegistered = data?.some(
-        (lead: any) =>
+        (lead) =>
           lead.phone?.replace(/\s/g, "") === phoneNumber.replace(/\s/g, "")
       );
 
@@ -65,62 +64,117 @@ const StudentDocumentUpload = () => {
         setVerificationError("Please try with registered phone number");
       }
       setIsChecking(false);
-    }, 500); // reduced timeout for faster response
+    }, 500);
   };
 
-  // Upload file to Imgbb
-  const uploadToImgbb = async (file: File) => {
-    const formData = new FormData();
-    formData.append("image", file);
+  // Upload file to ImgBB or PDF.co based on file type
+  const uploadFile = async (file) => {
+    if (!file) {
+      throw new Error("No file selected");
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error("File size exceeds 10MB limit");
+    }
 
-    try {
-      const response = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-        formData
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    const isImage = ["png", "jpg", "jpeg"].includes(fileExtension);
+    const isPdf = fileExtension === "pdf";
+
+    if (!isImage && !isPdf) {
+      throw new Error(
+        "Unsupported file type. Only PDF, PNG, JPG, JPEG allowed."
       );
-      return response.data.data.url;
-    } catch (err) {
-      console.error("Error uploading file:", err);
-      return null;
+    }
+
+    const formData = new FormData();
+    if (isImage) {
+      formData.append("image", file);
+      try {
+        const response = await axios.post(
+          `https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31`,
+          formData
+        );
+        return response.data.data.url;
+      } catch (err) {
+        throw new Error(
+          err.response?.data?.error?.message ||
+            "Failed to upload image to ImgBB"
+        );
+      }
+    } else if (isPdf) {
+      formData.append("file", file);
+      try {
+        const response = await axios.post(
+          "https://api.pdf.co/v1/file/upload",
+          formData,
+          {
+            headers: {
+              "x-api-key":
+                "akwebdev69@gmail.com_t9X8MSFZRD73MGhARssr0t2SijHRymWfUcIZbP5E2xPw9gh9ChiUTZkq2BggcIau",
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        return response.data.url;
+      } catch (err) {
+        throw new Error(
+          err.response?.data?.error || "Failed to upload PDF to PDF.co"
+        );
+      }
     }
   };
 
-  const handleFileUpload = async (
-    documentType: string,
-    files: FileList | null
-  ) => {
+  const handleFileUpload = async (documentType, files) => {
     if (!files) return;
 
-    const uploadedLinks: any[] = [];
+    const uploadedLinks = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const link = await uploadToImgbb(file);
-      if (link) {
-        uploadedLinks.push({
-          id: Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          size: file.size,
-          url: link,
-        });
+      try {
+        const url = await uploadFile(file);
+        if (url) {
+          uploadedLinks.push({
+            id: Math.random().toString(36).substr(2, 9),
+            name: file.name,
+            size: file.size,
+            url: url,
+            thumbnail: url,
+          });
+        }
+      } catch (err) {
+        setUploadErrors((prev) => ({
+          ...prev,
+          [documentType]: err.message || "Failed to upload file",
+        }));
       }
     }
 
-    setDocuments((prev) => ({
-      ...prev,
-      [documentType]: prev[documentType]
-        ? [...prev[documentType], ...uploadedLinks]
-        : uploadedLinks,
-    }));
+    if (uploadedLinks.length > 0) {
+      setDocuments((prev) => ({
+        ...prev,
+        [documentType]: prev[documentType]
+          ? [...prev[documentType], ...uploadedLinks]
+          : uploadedLinks,
+      }));
+      setUploadErrors((prev) => ({
+        ...prev,
+        [documentType]: "",
+      }));
+    }
   };
 
-  const removeFile = (documentType: string, fileId: string) => {
+  const removeFile = (documentType, fileId) => {
     setDocuments((prev) => ({
       ...prev,
       [documentType]: prev[documentType].filter((file) => file.id !== fileId),
     }));
+    setUploadErrors((prev) => ({
+      ...prev,
+      [documentType]: "",
+    }));
   };
 
-  const formatFileSize = (bytes: number) => {
+  const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
@@ -129,6 +183,16 @@ const StudentDocumentUpload = () => {
   };
 
   const handleSubmitDocuments = () => {
+    // Check if all required document types have at least one file
+    const missingRequired = documentTypes
+      .filter((doc) => doc.required)
+      .some((doc) => !documents[doc.id] || documents[doc.id].length === 0);
+
+    if (missingRequired) {
+      alert("Please upload all required documents before submitting.");
+      return;
+    }
+
     console.log("Documents array:", documents);
 
     axios
@@ -141,12 +205,12 @@ const StudentDocumentUpload = () => {
         setIsSubmitted(true);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         alert("Something went wrong. Try again later.");
       });
   };
 
-  if (isLoading) return <Loading></Loading>;
+  if (isLoading) return <Loading />;
 
   if (isSubmitted) {
     return <ThankYouPage />;
@@ -156,7 +220,6 @@ const StudentDocumentUpload = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8">
-          {/* Verification UI (same as before) */}
           <div className="text-center mb-6 lg:mb-8">
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
               <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -202,7 +265,14 @@ const StudentDocumentUpload = () => {
               disabled={phoneNumber.length < 10 || isChecking}
               className="w-full bg-primary text-white py-2.5 sm:py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm lg:text-base transition-colors"
             >
-              {isChecking ? "Checking..." : "Check Phone Number"}
+              {isChecking ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin inline-block" />
+                  Checking...
+                </>
+              ) : (
+                "Check Phone Number"
+              )}
             </button>
           </div>
         </div>
@@ -276,7 +346,7 @@ const StudentDocumentUpload = () => {
                     <input
                       type="file"
                       multiple
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept=".pdf,.png,.jpg,.jpeg"
                       onChange={(e) =>
                         handleFileUpload(docType.id, e.target.files)
                       }
@@ -285,9 +355,17 @@ const StudentDocumentUpload = () => {
                   </label>
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500">
-                  PDF, JPG, PNG up to 10MB
+                  PDF, PNG, JPG, JPEG up to 10MB
                 </p>
               </div>
+
+              {/* Upload Error */}
+              {uploadErrors[docType.id] && (
+                <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {uploadErrors[docType.id]}
+                </p>
+              )}
 
               {/* Uploaded Files Preview */}
               {documents[docType.id]?.length > 0 && (
