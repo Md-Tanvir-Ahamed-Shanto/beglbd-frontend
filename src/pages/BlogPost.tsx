@@ -32,7 +32,13 @@ const BlogPost = () => {
         });
     }
   }, [location]);
-
+  const [website, setWebsite] = useState([]);
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      const data = res?.data;
+      setWebsite(data);
+    });
+  }, []);
   useEffect(() => {
     console.log(location.pathname.split("/")[2]);
     const fetchPost = async () => {
@@ -92,7 +98,7 @@ const BlogPost = () => {
     <div className="min-h-screen font-bangla bg-gradient-to-br py-8 from-blue-50 to-sky-100">
       <Helmet>
         <title>
-          {blogPost?.metaTitle || blogPost?.title || "BEGL BD - Blog Post"}
+          {String(website[0]?.websiteTitle || "")} | {blogPost?.title}
         </title>
         <meta
           name="description"

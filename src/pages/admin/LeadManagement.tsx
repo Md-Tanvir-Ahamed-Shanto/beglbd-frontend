@@ -181,7 +181,7 @@ const LeadManagement = () => {
   return (
     <div className=" bg-gray-50 min-h-screen">
       <Helmet>
-        <title>Lead Management | Manage and track all student inquiries</title>
+        <title>Lead Management </title>
       </Helmet>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
         <div>

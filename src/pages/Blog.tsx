@@ -23,15 +23,16 @@ const Blog = () => {
     fetchPosts();
   }, []);
   const handleView = (links) => {
-    const id = links;
-    axios
-      .patch(`${import.meta.env.VITE_BASE_URL}/add_views/${id}`)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // const id = links;
+    // axios
+    //   .patch(`${import.meta.env.VITE_BASE_URL}/add_views/${id}`)
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    console.log("cliked");
   };
 
   const categories = ["সব", ...new Set(blogPosts.map((post) => post.category))];
@@ -40,14 +41,19 @@ const Blog = () => {
       ? blogPosts
       : blogPosts.filter((post) => post.category === selectedCategory);
 
+  const [website, setWebsite] = useState([]);
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      const data = res?.data;
+      setWebsite(data);
+    });
+  }, []);
+
   return (
     <div className="min-h-screen font-bangla bg-gradient-to-br from-blue-50 to-sky-100">
       {/* helmet using for seo---> */}
       <Helmet>
-        <title>
-          আমাদের ব্লগ | বিদেশে উচ্চশিক্ষা সম্পর্কে সর্বশেষ তথ্য, টিপস এবং
-          গাইডলাইন পান আমাদের ব্লগ থেকে।
-        </title>
+        <title>{String(website[0]?.websiteTitle || "")} | আমাদের ব্লগ</title>
       </Helmet>
       {/* Hero Section */}
       <section className="py-12 lg:py-24 bg-gradient-to-r from-purple-600 via-blue-600 to-green-500 text-white">

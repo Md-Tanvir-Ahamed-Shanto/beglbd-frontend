@@ -170,7 +170,7 @@ const Settings = () => {
   const renderGeneralSettings = () => (
     <div className="space-y-6">
       <Helmet>
-        <title>Website Title | General Website Settings</title>
+        <title>Website Title </title>
       </Helmet>
       <h3 className="text-lg font-semibold text-gray-900">
         General Website Settings

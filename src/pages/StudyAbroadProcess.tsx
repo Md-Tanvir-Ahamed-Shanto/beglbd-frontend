@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CheckCircle,
@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import axios from "axios";
 const StudyAbroadProcess = () => {
   const agencyServices = [
     {
@@ -123,13 +124,20 @@ const StudyAbroadProcess = () => {
       description: "প্রয়োজন অনুযায়ী মূল কাগজপত্র জমা দিন",
     },
   ];
+
+  const [website, setWebsite] = useState([]);
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      const data = res?.data;
+      setWebsite(data);
+    });
+  }, []);
   return (
     <div className="min-h-screen font-bangla bg-gradient-to-br from-purple-50 via-blue-50 to-green-50">
       {/* Hero Section */}
       <Helmet>
         <title>
-          বিদেশে পড়াশোনার প্রক্রিয়া | ধাপে ধাপে জেনে নিন কীভাবে বিদেশে
-          পড়াশোনার স্বপ্ন বাস্তবায়ন করবেন
+          {String(website[0]?.websiteTitle || "")} | বিদেশে পড়াশোনার প্রক্রিয়া
         </title>
       </Helmet>
       <section className="py-16 lg:py-24">

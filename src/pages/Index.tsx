@@ -260,7 +260,7 @@ const Index = () => {
         {/* Page Title */}
         <title>
           {adminData[0]?.websiteTitle
-            ? `${adminData[0]?.websiteTitle} | ${adminData[0]?.tagline}`
+            ? `${adminData[0]?.websiteTitle} | হোম`
             : "BEGL BD - Home"}
         </title>
 

@@ -307,9 +307,7 @@ const MaterialManagement = () => {
     <div className="space-y-6">
       {/* Error Message */}
       <Helmet>
-        <title>
-          Material Management | Manage study materials for the public website
-        </title>
+        <title>Material Management</title>
       </Helmet>
       {error && (
         <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>

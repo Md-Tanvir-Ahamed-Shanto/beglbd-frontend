@@ -128,7 +128,7 @@ const DocumentManagement = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <Helmet>
-        <title>Document Management | Manage uploaded student documents</title>
+        <title>Document Management </title>
       </Helmet>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>

@@ -1,19 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Globe, Award, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import axios from "axios";
 const About = () => {
+  const [website, setWebsite] = useState([]);
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      const data = res?.data;
+      setWebsite(data);
+    });
+  }, []);
   return (
     <div className="min-h-screen font-bangla bg-gradient-to-br from-blue-50 to-sky-100">
       {/* Hero Section */}
       <Helmet>
         <title>
-          আমাদের সম্পর্কে | বিদেশে পড়াশোনার জন্য প্রয়োজনীয় সকল গুরুত্বপূর্ণ
-          ডকুমেন্ট এবং গাইডলাইন এক জায়গায়
+          {String(website[0]?.websiteTitle || "")} | আমাদের সম্পর্কে
         </title>
       </Helmet>
+
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">

@@ -156,9 +156,7 @@ const BlogManagement = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>
-          ব্লগ ম্যানেজমেন্ট | ব্লগ পোস্ট এবং ক্যাটাগরি পরিচালনা করুন
-        </title>
+        <title>ব্লগ ম্যানেজমেন্ট</title>
       </Helmet>
       <div className="">
         <div className="max-w-7xl mx-auto">

@@ -50,6 +50,14 @@ const Contact = () => {
     fetchContactInfo();
   }, []);
 
+  const [website, setWebsite] = useState([]);
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_BASE_URL}/admin_data`).then((res) => {
+      const data = res?.data;
+      setWebsite(data);
+    });
+  }, []);
+
   // Handle loading state
   if (isLoading) {
     return <Loading />;
@@ -59,10 +67,7 @@ const Contact = () => {
     <div className="min-h-screen font-bangla bg-gradient-to-br from-blue-50 to-sky-100">
       {/* Hero Section */}
       <Helmet>
-        <title>
-          যোগাযোগ করুন | আপনার যেকোনো প্রশ্ন বা পরামর্শের জন্য আমাদের সাথে
-          যোগাযোগ করুন। আমরা সর্বদা আপনার সেবায় নিয়োজিত।
-        </title>
+        <title>{String(website[0]?.websiteTitle || "")} | যোগাযোগ করুন</title>
       </Helmet>
       <ScrollToTop></ScrollToTop>
       <section className="py-12 lg:py-24">

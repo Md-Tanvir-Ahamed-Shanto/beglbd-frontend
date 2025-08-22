@@ -130,7 +130,7 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <Helmet>
-        <title>Dashboard |Overview of your lead management system</title>
+        <title>Dashboard </title>
       </Helmet>
       <div className="flex items-center justify-between">
         <div>

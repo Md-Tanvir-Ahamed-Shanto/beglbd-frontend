@@ -488,7 +488,7 @@ const WebsiteManagement = () => {
   const renderHeroSection = () => (
     <div className="space-y-6">
       <Helmet>
-        <title>Website Management | BEGL_BD</title>
+        <title>Website Management</title>
       </Helmet>
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Hero Section</h3>
