@@ -7,7 +7,7 @@ interface AuthUser {
 }
 // git add .
 // git commit -m "Your commit message"
-// git push origin feature/Abu-Kalam
+// git push origin main
 interface MyContextType {
   user: AuthUser | null;
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;

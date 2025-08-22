@@ -32,7 +32,7 @@ const BlogPost = () => {
     fetchPost();
   }, [id]);
 
-  if (!blogPost) return <div>Loading...</div>;
+  if (!blogPost) return <div></div>;
 
   const currentUrl = `${window.location.origin}/blog/${blogPost._id}`;
   const shareText = blogPost.title + "\n\n" + currentUrl;
@@ -184,7 +184,7 @@ const BlogPost = () => {
                   <User size={16} />
                   <span>{blogPost.author || "Admin"}</span>
                 </div>
-                <div className="flex items-center space-x-1 text-sm text-gray-600">
+                <div className="flex font-bold items-center space-x-1 text-sm text-gray-600">
                   <Calendar size={16} />
                   <span>{blogPost.date || blogPost.publishDate}</span>
                 </div>

@@ -45,6 +45,7 @@ import {
 const MaterialManagement = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
@@ -111,6 +112,7 @@ const MaterialManagement = () => {
   };
 
   const handleUpload = async () => {
+    setLoadingUpload(true);
     try {
       if (!newMaterial.title || !newMaterial.description) {
         setError("Title and description are required");
@@ -151,7 +153,9 @@ const MaterialManagement = () => {
         status: "Active",
       });
       setError("");
+      setLoadingUpload(false);
     } catch (err) {
+      setLoadingUpload(false);
       console.error("Error uploading material:", err.response || err.message);
       setError(
         err.response?.data?.message ||
@@ -384,7 +388,9 @@ const MaterialManagement = () => {
                 >
                   Cancel
                 </Button>
-                <Button onClick={handleUpload}>Upload Material</Button>
+                <Button onClick={handleUpload}>
+                  {loadingUpload ? "Uploading..." : "Upload Material"}
+                </Button>
               </div>
             </div>
           </DialogContent>
