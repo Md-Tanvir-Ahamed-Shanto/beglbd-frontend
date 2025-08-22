@@ -9,6 +9,8 @@ import {
   LogOut,
   ChevronRight,
   FileText,
+  FolderOpen,
+  BookOpen,
 } from "lucide-react";
 
 const AdminSidebar = () => {
@@ -19,6 +21,8 @@ const AdminSidebar = () => {
     { name: "Lead Management", icon: Users, path: "/admin/leads" },
     { name: "Counselor", icon: UserCheck, path: "/admin/counselors" },
     { name: "Document", icon: FileText, path: "/admin/documents" },
+    { name: "Material", icon: FolderOpen, path: "/admin/materials" },
+    { name: "Blog Management", icon: BookOpen, path: "/admin/blog" },
     { name: "Website", icon: Globe, path: "/admin/website" },
     { name: "Settings", icon: Settings, path: "/admin/settings" },
   ];
