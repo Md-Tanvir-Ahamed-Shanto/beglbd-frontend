@@ -449,7 +449,7 @@ const MaterialManagement = () => {
             <FileText className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{materials.length}</div>
+            <div className="text-2xl font-bold">{materials?.length}</div>
             <p className="text-xs text-muted-foreground">
               Updated in real-time
             </p>
@@ -493,42 +493,42 @@ const MaterialManagement = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {materials.map((material) => (
-                  <TableRow key={material._id}>
+                {materials?.map((material) => (
+                  <TableRow key={material?._id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        {getFileIcon(material.type)}
+                        {getFileIcon(material?.type)}
                         <div className="min-w-0 flex-1">
                           <div className="font-medium truncate">
-                            {material.title}
+                            {material?.title}
                           </div>
                           <div className="text-sm text-gray-500 truncate">
-                            {material.description.slice(0, 40) + "..."}
+                            {material?.description?.slice(0, 40) + "..."}
                           </div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <span className="capitalize text-sm bg-gray-100 px-2 py-1 rounded">
-                        {material.type}
+                        {material?.type}
                       </span>
                     </TableCell>
-                    <TableCell>{material.fileSize}</TableCell>
-                    <TableCell>{material.uploadDate}</TableCell>
+                    <TableCell>{material?.fileSize}</TableCell>
+                    <TableCell>{material?.uploadDate}</TableCell>
                     <TableCell>
                       <span className="text-sm font-medium text-blue-600">
-                        {material.downloads || 0}
+                        {material?.downloads || 0}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span
                         className={`text-sm px-2 py-1 rounded ${
-                          material.status === "Active"
+                          material?.status === "Active"
                             ? "bg-green-100 text-green-800"
                             : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
-                        {material.status}
+                        {material?.status}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
@@ -570,20 +570,20 @@ const MaterialManagement = () => {
 
           {/* Mobile Card View */}
           <div className="md:hidden space-y-4">
-            {materials.map((material) => (
+            {materials?.map((material) => (
               <div
-                key={material._id}
+                key={material?._id}
                 className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    {getFileIcon(material.type)}
+                    {getFileIcon(material?.type)}
                     <div className="min-w-0 flex-1">
                       <h3 className="font-medium text-gray-900 truncate">
-                        {material.title}
+                        {material?.title}
                       </h3>
                       <p className="text-sm text-gray-500 line-clamp-2">
-                        {material.description.slice(0, 50) + "..."}
+                        {material?.description?.slice(0, 50) + "..."}
                       </p>
                     </div>
                   </div>
@@ -593,25 +593,25 @@ const MaterialManagement = () => {
                   <div className="flex flex-col">
                     <span className="text-gray-500 text-xs">Type</span>
                     <span className="capitalize bg-gray-100 px-2 py-1 rounded text-xs inline-block w-fit">
-                      {material.type}
+                      {material?.type}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-gray-500 text-xs">Size</span>
                     <span className="text-gray-900 text-sm">
-                      {material.fileSize}
+                      {material?.fileSize}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-gray-500 text-xs">Uploaded</span>
                     <span className="text-gray-900 text-sm">
-                      {material.uploadDate}
+                      {material?.uploadDate}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-gray-500 text-xs">Downloads</span>
                     <span className="font-medium text-blue-600 text-sm">
-                      {material.downloads || 0}
+                      {material?.downloads || 0}
                     </span>
                   </div>
                 </div>
@@ -621,12 +621,12 @@ const MaterialManagement = () => {
                     <span className="text-gray-500 text-xs">Status: </span>
                     <span
                       className={`text-xs px-2 py-1 rounded ${
-                        material.status === "Active"
+                        material?.status === "Active"
                           ? "bg-green-100 text-green-800"
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {material.status}
+                      {material?.status}
                     </span>
                   </div>
                   <div className="flex space-x-2">
