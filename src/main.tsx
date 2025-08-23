@@ -14,16 +14,19 @@ const Root = () => {
         const metaTitle = document.getElementById("metaTitle");
         const metaDescription = document.getElementById("metaDescription");
         if (metaTitle) {
-          metaTitle.setAttribute("content", data.title || "Default Title");
+          metaTitle.setAttribute(
+            "content",
+            data.websiteTitle || "Default Title"
+          );
         }
         if (metaDescription) {
           metaDescription.setAttribute(
             "content",
-            data.description || "Default Description"
+            data.metaDescription || "Default Description"
           );
         }
         // ডকুমেন্ট টাইটেল আপডেট
-        document.title = data.title || "Default Title";
+        document.title = data.websiteTitle || "Default Title";
       })
       .catch((error) => {
         console.error("Error fetching admin data:", error);
