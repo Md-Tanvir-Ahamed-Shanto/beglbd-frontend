@@ -114,29 +114,42 @@ const MaterialManagement = () => {
         );
         return imgbbResponse.data.data.url;
       } catch (err) {
+        console.error("ImgBB error:", err.response?.data || err.message);
         throw new Error(
           err.response?.data?.error?.message ||
             "Failed to upload image to ImgBB"
         );
       }
     } else if (type === "pdf") {
-      formData.append("file", file);
+      formData.append("reqtype", "fileupload");
+      formData.append("fileToUpload", file);
+      formData.append("time", "72h"); // Set expiration (1h, 12h, 24h, or 72h)
       try {
-        const pdfcoResponse = await axios.post(
-          "https://api.pdf.co/v1/file/upload",
+        const litterboxResponse = await axios.post(
+          "https://litterbox.catbox.moe/resources/internals/api.php",
           formData,
           {
             headers: {
-              "x-api-key":
-                "akwebdev69@gmail.com_t9X8MSFZRD73MGhARssr0t2SijHRymWfUcIZbP5E2xPw9gh9ChiUTZkq2BggcIau",
               "Content-Type": "multipart/form-data",
             },
           }
         );
-        return pdfcoResponse.data.url;
+        if (litterboxResponse.data.startsWith("https://")) {
+          return litterboxResponse.data;
+        } else {
+          console.error("Litterbox response:", litterboxResponse.data);
+          throw new Error("Upload failed: Invalid response from Litterbox");
+        }
       } catch (err) {
+        console.error("Litterbox error:", {
+          status: err.response?.status,
+          data: err.response?.data,
+          message: err.message,
+        });
         throw new Error(
-          err.response?.data?.error || "Failed to upload PDF to PDF.co"
+          err.response?.data ||
+            err.message ||
+            "Failed to upload PDF to Litterbox"
         );
       }
     } else {
