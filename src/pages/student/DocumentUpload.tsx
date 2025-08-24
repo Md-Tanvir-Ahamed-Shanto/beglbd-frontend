@@ -77,50 +77,26 @@ const StudentDocumentUpload = () => {
     }
 
     const fileExtension = file.name.split(".").pop().toLowerCase();
-    const isImage = ["png", "jpg", "jpeg"].includes(fileExtension);
-    const isPdf = fileExtension === "pdf";
-
-    if (!isImage && !isPdf) {
+    const allowedTypes = ["pdf", "png", "jpg", "jpeg"];
+    if (!allowedTypes.includes(fileExtension)) {
       throw new Error(
         "Unsupported file type. Only PDF, PNG, JPG, JPEG allowed."
       );
     }
 
     const formData = new FormData();
-    if (isImage) {
-      formData.append("image", file);
-      try {
-        const response = await axios.post(
-          `https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31`,
-          formData
-        );
-        return response.data.data.url;
-      } catch (err) {
-        throw new Error(
-          err.response?.data?.error?.message ||
-            "Failed to upload image to ImgBB"
-        );
-      }
-    } else if (isPdf) {
-      formData.append("file", file);
-      try {
-        const response = await axios.post(
-          "https://api.pdf.co/v1/file/upload",
-          formData,
-          {
-            headers: {
-              "x-api-key":
-                "akwebdev69@gmail.com_t9X8MSFZRD73MGhARssr0t2SijHRymWfUcIZbP5E2xPw9gh9ChiUTZkq2BggcIau",
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        return response.data.url;
-      } catch (err) {
-        throw new Error(
-          err.response?.data?.error || "Failed to upload PDF to PDF.co"
-        );
-      }
+    formData.append("image", file);
+
+    try {
+      const response = await axios.post(
+        `https://api.imgbb.com/1/upload?key=a710bf9dd69fd9fc2860512c2c901c31`,
+        formData
+      );
+      return response.data.data.url;
+    } catch (err) {
+      throw new Error(
+        err.response?.data?.error?.message || "Failed to upload file to ImgBB"
+      );
     }
   };
 
