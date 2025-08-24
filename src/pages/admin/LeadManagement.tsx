@@ -28,6 +28,7 @@ import LeadViewModal from "@/components/admin/LeadViewModal";
 import LeadEditModal from "@/components/admin/LeadEditModal";
 import useGetAllLeadsData from "@/hooks/useGetAllLeadsData";
 import Loading from "@/components/Loading";
+import useCounselorData from "@/hooks/useCounselorData";
 
 interface Lead {
   id: number;
@@ -55,6 +56,8 @@ const LeadManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { data, isLoading } = useGetAllLeadsData();
+  const { data: counselorData, isLoading: isLoadingCounselors } =
+    useCounselorData();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -176,7 +179,7 @@ const LeadManagement = () => {
     doc.save("leads.pdf");
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading && isLoadingCounselors) return <Loading />;
 
   return (
     <div className=" bg-gray-50 min-h-screen">
@@ -238,12 +241,12 @@ const LeadManagement = () => {
                   onChange={(e) => setCounselorFilter(e.target.value)}
                   className="w-full lg:w-auto border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  <option value="all">All Counselors</option>
-                  <option value="Sarah Johnson">Sarah Johnson</option>
-                  <option value="David Smith">David Smith</option>
-                  <option value="Emily Davis">Emily Davis</option>
-                  <option value="Michael Brown">Michael Brown</option>
-                  <option value="Not Assigned">Not Assigned</option>
+                  {counselorData?.map((counselor) => (
+                    <option key={counselor.id} value={counselor.name}>
+                      {counselor.name}
+                    </option>
+                  ))}
+                  <option value="Admin">Admin</option>
                 </select>
               </div>
 
